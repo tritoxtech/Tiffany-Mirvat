@@ -177,7 +177,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:1
     </div>
     <div class="brand-right">
       <nav class="resource-links" aria-label="Project resources">
-        <a class="resource-link" href="https://docs.google.com/spreadsheets/d/1q-d_-eAQcNXTOkqlLUoG2kv6AoE2MUb76PPY2ScvC6Q/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">
+        <a class="resource-link" href="https://docs.google.com/spreadsheets/u/2/d/1tb8vyiIJzFodM90AiaLgRHt8XQrVg_-quQ9Tm8eGegY/edit?gid=82475383#gid=82475383" target="_blank" rel="noopener noreferrer">
           <span class="resource-icon sheet" aria-hidden="true">▦</span>
           <span>Open Worksheet</span>
         </a>
