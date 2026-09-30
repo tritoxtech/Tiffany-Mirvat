@@ -1,1 +1,1171 @@
-# Tiffany-Mirvat
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Tiffany (Mirvat) FIQ · TritoX Quality Check</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+:root{
+  --bg:#080a0f;--surface:#111520;--surface2:#171c2c;--surface3:#1e2438;
+  --border:#252d45;--border2:#2e3850;
+  --accent:#00d4ff;--accent2:#0085ff;--accent3:#7b2fff;
+  --pass:#00e887;--pass-bg:rgba(0,232,135,0.07);
+  --fail:#ff4d6a;--fail-bg:rgba(255,77,106,0.07);
+  --warn:#ffb347;--warn-bg:rgba(255,179,71,0.07);
+  --stop:#ff2d55;--stop-bg:rgba(255,45,85,0.12);
+  --text:#dce4f5;--text2:#8a97bb;--muted:#424d6b;
+  --sans:'DM Sans',sans-serif;--brand:'Orbitron',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);min-height:100vh;
+  background-image:radial-gradient(ellipse 80% 40% at 50% -10%,rgba(0,133,255,0.08) 0%,transparent 70%),
+  radial-gradient(ellipse 40% 30% at 90% 10%,rgba(123,47,255,0.06) 0%,transparent 60%);}
+.app{max-width:1200px;margin:0 auto;padding:36px 24px 80px;}
+/* Header */
+.brand-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:48px;padding-bottom:28px;border-bottom:1px solid var(--border);}
+.brand-left{display:flex;align-items:center;gap:16px;}
+.back-link{width:42px;height:42px;border-radius:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;text-decoration:none;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:24px;transition:all .2s;}
+.back-link:hover{border-color:var(--accent);color:var(--accent);transform:translateX(-2px);}
+.brand-logo{width:64px;height:56px;border-radius:0;flex-shrink:0;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:none;position:relative;overflow:hidden;}
+.brand-logo img{width:100%;height:100%;object-fit:contain;display:block;}
+.brand-logo::after{content:none;}
+.brand-name{font-family:var(--brand);font-size:22px;font-weight:900;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.brand-sub{font-size:12px;color:var(--text2);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px;}
+.brand-right{display:flex;align-items:center;gap:16px;}
+.resource-links{display:flex;align-items:center;gap:10px;}
+.resource-link{height:40px;display:inline-flex;align-items:center;gap:9px;padding:0 15px;border:1px solid var(--border2);border-radius:10px;background:var(--surface2);color:var(--text);font-size:12px;font-weight:700;text-decoration:none;white-space:nowrap;transition:all .2s;}
+.resource-link:hover{border-color:var(--accent);background:rgba(0,133,255,.08);transform:translateY(-1px);}
+.resource-icon{width:22px;height:22px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:900;}
+.resource-icon.sheet{background:#188038;}
+.resource-icon.doc{background:#1a73e8;}
+.status-links{display:flex;align-items:center;gap:10px;}
+.brand-badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:11px;color:var(--text2);letter-spacing:1px;text-transform:uppercase;}
+
+.debug-btn{background:#1e2438;border:1px solid #2e3850;color:#8a97bb;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;transition:all 0.15s;}
+.debug-btn:hover{border-color:#00d4ff;color:#00d4ff;}
+
+.live-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--pass);margin-right:5px;animation:pulse 1.8s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+@media(max-width:900px){
+  .brand-header{align-items:flex-start;flex-direction:column;}
+  .brand-right{width:100%;justify-content:space-between;flex-wrap:wrap;}
+}
+@media(max-width:560px){
+  .resource-links{width:100%;}
+  .resource-link{flex:1;justify-content:center;padding:0 10px;}
+}
+/* Upload */
+.upload-zone{border:2px dashed var(--border2);border-radius:20px;padding:56px 32px;text-align:center;cursor:pointer;transition:all 0.25s;background:var(--surface);margin-bottom:32px;position:relative;overflow:hidden;}
+.upload-zone::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 100%,rgba(0,133,255,0.04) 0%,transparent 70%);pointer-events:none;}
+.upload-zone:hover,.upload-zone.drag-over{border-color:var(--accent2);background:rgba(0,133,255,0.04);}
+.upload-zone input{display:none;}
+.upload-icon{font-size:42px;margin-bottom:16px;display:block;}
+.upload-zone h2{font-size:18px;font-weight:700;margin-bottom:8px;font-family:var(--brand);letter-spacing:1px;}
+.upload-zone p{font-size:13px;color:var(--text2);line-height:1.7;}
+.btn-upload{display:inline-block;margin-top:20px;padding:12px 32px;background:linear-gradient(135deg,var(--accent2),var(--accent3));color:#fff;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;font-family:var(--sans);letter-spacing:0.5px;box-shadow:0 4px 20px rgba(0,133,255,0.25);}
+.btn-upload:hover{transform:translateY(-1px);}
+/* Progress */
+.progress-wrap{display:none;margin-bottom:28px;}
+.progress-label{font-size:12px;color:var(--text2);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.progress-track{height:4px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent),var(--accent3));border-radius:4px;transition:width 0.3s;}
+/* Summary */
+.summary-bar{display:none;gap:14px;margin-bottom:28px;flex-wrap:wrap;}
+.summary-card{flex:1;min-width:130px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;}
+.sc-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:8px;font-weight:600;}
+.sc-val{font-family:var(--brand);font-size:30px;font-weight:700;}
+.sc-total .sc-val{color:var(--text);}
+.sc-pass .sc-val{color:var(--pass);}
+.sc-fail .sc-val{color:var(--fail);}
+.sc-warn .sc-val{color:var(--warn);}
+/* Toolbar */
+.toolbar{display:none;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.filter-btn{padding:7px 18px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);font-size:13px;cursor:pointer;transition:all 0.15s;font-family:var(--sans);font-weight:500;}
+.filter-btn:hover{border-color:var(--accent2);color:var(--text);}
+.filter-btn.active{background:linear-gradient(135deg,var(--accent2),var(--accent3));border-color:transparent;color:#fff;}
+.search-box{margin-left:auto;padding:8px 16px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:13px;width:210px;font-family:var(--sans);outline:none;transition:border-color 0.2s;}
+.search-box:focus{border-color:var(--accent2);}
+.search-box::placeholder{color:var(--muted);}
+.btn-action{padding:8px 18px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);font-size:13px;cursor:pointer;transition:all 0.15s;font-family:var(--sans);font-weight:500;}
+.btn-action:hover{border-color:var(--accent2);color:var(--text);}
+.btn-stop{border-color:rgba(255,45,85,0.4);color:var(--stop);}
+.btn-stop:hover{border-color:var(--stop);background:var(--stop-bg);}
+.btn-danger:hover{border-color:var(--fail);color:var(--fail);}
+/* Table */
+.results-wrap{display:none;}
+.results-table{width:100%;border-collapse:collapse;}
+.results-table thead tr{border-bottom:1px solid var(--border);}
+.results-table th{text-align:left;padding:10px 14px;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:700;white-space:nowrap;}
+.row-card{border-bottom:1px solid var(--border);transition:background 0.15s;}
+.row-card:hover{background:rgba(255,255,255,0.015);}
+/* STOP banner */
+.stop-banner{background:var(--stop-bg);border-left:3px solid var(--stop);padding:8px 14px;font-size:12px;font-weight:700;color:var(--stop);letter-spacing:0.5px;}
+.row-main{display:grid;grid-template-columns:32px 200px 140px 90px 110px 105px 1fr;align-items:center;gap:0;cursor:pointer;padding:15px 14px;}
+.row-expand{color:var(--muted);font-size:10px;transition:transform 0.2s;user-select:none;}
+.row-expand.open{transform:rotate(90deg);color:var(--accent);}
+.col-name .cname{font-weight:600;font-size:14px;color:var(--text);}
+.col-name .fname{font-size:11px;color:var(--muted);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px;}
+.chip{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;}
+.chip-farmers{background:rgba(255,179,71,0.12);color:var(--warn);border:1px solid rgba(255,179,71,0.2);}
+.chip-farmer-bristol{background:rgba(123,47,255,0.12);color:#a78bfa;border:1px solid rgba(123,47,255,0.2);}
+.chip-bristol{background:rgba(0,133,255,0.12);color:var(--accent);border:1px solid rgba(0,133,255,0.2);}
+.chip-unknown{background:var(--surface2);color:var(--muted);border:1px solid var(--border);}
+.status-badge{display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;}
+.status-pass{background:var(--pass-bg);color:var(--pass);border:1px solid rgba(0,232,135,0.2);}
+.status-fail{background:var(--fail-bg);color:var(--fail);border:1px solid rgba(255,77,106,0.2);}
+.status-warn{background:var(--warn-bg);color:var(--warn);border:1px solid rgba(255,179,71,0.2);}
+.err-pill{display:inline-block;background:var(--fail-bg);color:var(--fail);border:1px solid rgba(255,77,106,0.2);border-radius:5px;padding:2px 9px;margin:2px 3px 2px 0;font-size:11px;}
+.warn-pill{display:inline-block;background:var(--warn-bg);color:var(--warn);border:1px solid rgba(255,179,71,0.2);border-radius:5px;padding:2px 9px;margin:2px 3px 2px 0;font-size:11px;}
+.ok-text{color:var(--pass);font-size:12px;font-weight:600;}
+/* Details */
+.row-details{display:none;padding:4px 14px 22px 46px;gap:10px;}.row-details.open{display:flex;flex-direction:column;}.row-details-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;}
+
+.detail-group{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;}
+.detail-group h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--border);}
+.check-item{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;font-size:13px;line-height:1.4;}
+.check-item:last-child{margin-bottom:0;}
+.ci-icon{flex-shrink:0;margin-top:1px;}
+.ci-ok{color:var(--pass);}.ci-fail{color:var(--fail);}.ci-warn{color:var(--warn);}.ci-info{color:var(--accent);}
+.ci-label{color:var(--text2);flex:1;}
+.ci-val{font-size:12px;font-weight:600;white-space:nowrap;}
+.ci-val.bad{color:var(--fail);}.ci-val.ok{color:var(--pass);}.ci-val.neutral{color:var(--text2);}
+.vehicle-item{background:var(--surface3);border-radius:8px;padding:11px 13px;margin-bottom:7px;}
+.vehicle-item:last-child{margin-bottom:0;}
+.v-name{font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text);}
+.v-tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px;}
+.v-ok{background:var(--pass-bg);color:var(--pass);padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;}
+.v-fail{background:var(--fail-bg);color:var(--fail);padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;}
+.v-info{background:rgba(0,133,255,0.1);color:var(--accent);padding:2px 9px;border-radius:4px;font-size:11px;font-weight:600;}
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.processing-row td{padding:16px 14px;color:var(--text2);font-size:13px;border-bottom:1px solid var(--border);}
+
+/* AgencyZoom Checklist */
+.az-panel{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:4px;}
+.az-panel h4{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:12px;font-weight:700;padding-bottom:8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;}
+.az-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:13px;}
+.az-row:last-child{margin-bottom:0;}
+.az-label{color:var(--text2);flex:1;min-width:120px;font-size:12px;}
+.az-val{color:var(--text);font-weight:600;flex:2;font-size:13px;}
+.az-copy{background:var(--surface3);border:1px solid var(--border2);color:var(--accent);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;transition:all 0.15s;white-space:nowrap;font-family:var(--sans);}
+.az-copy:hover{background:rgba(0,212,255,0.1);border-color:var(--accent);}
+.az-copy.copied{background:rgba(0,232,135,0.1);border-color:var(--pass);color:var(--pass);}
+.az-manual{color:var(--warn);font-size:11px;font-style:italic;}
+/* Home QC group */
+.home-group{border-color:rgba(123,47,255,0.3);}
+.home-group h4{color:#a78bfa;}
+
+
+/* Bookmarklet Section */
+.footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.footer-brand{font-family:var(--brand);font-size:13px;letter-spacing:2px;background:linear-gradient(90deg,var(--accent),var(--accent3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.footer-note{font-size:12px;color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="brand-header">
+    <div class="brand-left">
+      <a class="back-link" href="https://tritoxtech.github.io/Qccheck/" aria-label="Back to FIQ QC Hub" title="Back to FIQ QC Hub">&#8592;</a>
+      <div class="brand-logo"><img src="data:image/jpeg;base64,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" alt="TritoX logo"/></div>
+      <div>
+        <div class="brand-name">TritoX</div>
+        <div class="brand-sub">Tiffany (Mirvat) FIQ · Quality Check System · Auto &amp; Bundle</div>
+      </div>
+    </div>
+    <div class="brand-right">
+      <nav class="resource-links" aria-label="Project resources">
+        <a class="resource-link" href="https://docs.google.com/spreadsheets/d/1q-d_-eAQcNXTOkqlLUoG2kv6AoE2MUb76PPY2ScvC6Q/edit?usp=drivesdk" target="_blank" rel="noopener noreferrer">
+          <span class="resource-icon sheet" aria-hidden="true">▦</span>
+          <span>Open Worksheet</span>
+        </a>
+        <a class="resource-link" href="https://docs.google.com/document/d/15ZswbwNtzZBtdaD3tD5PUD7BSwdddlOtU78LtX509gM/edit?tab=t.0" target="_blank" rel="noopener noreferrer">
+          <span class="resource-icon doc" aria-hidden="true">≡</span>
+          <span>View Instructions</span>
+        </a>
+      </nav>
+      <div class="status-links">
+        <span class="brand-badge"><span class="live-dot"></span>Live</span>
+        <span class="brand-badge">v4.34 STABLE</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="upload-zone" id="uploadZone">
+    <input type="file" id="fileInput" multiple accept=".pdf"/>
+    <span class="upload-icon">📂</span>
+    <h2>Drop Quote PDFs Here</h2>
+    <p>Farmers · Farmer-Bristol · Bristol West · Bulk upload up to 20 PDFs</p>
+    <button class="btn-upload" onclick="document.getElementById('fileInput').click()">Select PDF Files</button>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap">
+    <div class="progress-label"><span class="spinner"></span><span id="progressLabel">Processing...</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <div class="summary-bar" id="summaryBar">
+    <div class="summary-card sc-total"><div class="sc-label">Total</div><div class="sc-val" id="scTotal">0</div></div>
+    <div class="summary-card sc-pass"><div class="sc-label">✓ Passed</div><div class="sc-val" id="scPass">0</div></div>
+    <div class="summary-card sc-fail"><div class="sc-label">✗ Flagged</div><div class="sc-val" id="scFail">0</div></div>
+    <div class="summary-card sc-warn"><div class="sc-label">⚠ Warnings</div><div class="sc-val" id="scWarn">0</div></div>
+  </div>
+
+  <div class="toolbar" id="toolbar">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="fail">Flagged</button>
+    <button class="filter-btn" data-filter="warn">Warnings</button>
+    <button class="filter-btn" data-filter="pass">Passed</button>
+    <input class="search-box" id="searchBox" type="text" placeholder="🔍  Search customer name..."/>
+    <button class="btn-action" onclick="exportCSV('all')">⬇ Export All</button>
+    <button class="btn-action btn-stop" onclick="exportCSV('flagged')">⬇ Export Flagged</button>
+    <button class="btn-action btn-danger" onclick="clearAll()">🗑 Clear All</button>
+  </div>
+
+  <div class="results-wrap" id="resultsWrap">
+    <table class="results-table">
+      <thead>
+        <tr>
+          <th></th><th>Customer</th><th>Type</th><th>Vehicles</th>
+          <th>Monthly EFT</th><th>Status</th><th>Flags / Notes</th>
+        </tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+<div class="footer">
+    <span class="footer-brand">TRITOX QC</span>
+    <span class="footer-note">All checks run locally · No data uploaded · Free to use forever</span>
+  </div>
+</div>
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+let allResults=[];
+let activeFilter='all';
+
+const zone=document.getElementById('uploadZone');
+zone.addEventListener('click',e=>{if(e.target.tagName!=='BUTTON')document.getElementById('fileInput').click();});
+zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('drag-over');});
+zone.addEventListener('dragleave',()=>zone.classList.remove('drag-over'));
+zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('drag-over');handleFiles(e.dataTransfer.files);});
+document.getElementById('fileInput').addEventListener('change',e=>{handleFiles(e.target.files);e.target.value='';});
+document.getElementById('searchBox').addEventListener('input',renderTable);
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');activeFilter=btn.dataset.filter;renderTable();
+  });
+});
+
+async function handleFiles(files){
+  const pdfs=Array.from(files).filter(f=>f.name.toLowerCase().endsWith('.pdf'));
+  if(!pdfs.length)return;
+  document.getElementById('progressWrap').style.display='block';
+  document.getElementById('summaryBar').style.display='flex';
+  document.getElementById('toolbar').style.display='flex';
+  document.getElementById('resultsWrap').style.display='block';
+  const fill=document.getElementById('progressFill');
+  const label=document.getElementById('progressLabel');
+  for(let i=0;i<pdfs.length;i++){
+    label.textContent=`Processing ${i+1} of ${pdfs.length}: ${pdfs[i].name}`;
+    fill.style.width=((i/pdfs.length)*100)+'%';
+    const spinId='spin_'+Date.now();
+    const tbody=document.getElementById('resultsBody');
+    const spinRow=document.createElement('tr');
+    spinRow.id=spinId;spinRow.className='processing-row';
+    spinRow.innerHTML=`<td colspan="7"><span class="spinner"></span>&nbsp;Analyzing ${pdfs[i].name}...</td>`;
+    tbody.appendChild(spinRow);
+    try{
+      const text=await extractPDFText(pdfs[i]);
+      const result=analyzeQuote(text,pdfs[i].name);
+      result._rawText=text;
+      allResults.push(result);
+    }catch(e){
+      allResults.push({filename:pdfs[i].name,name:pdfs[i].name.replace('.pdf','').replace(/_/g,' '),
+        quoteType:'Unknown',errors:['Could not read PDF'],warnings:[],vehicles:[],drivers:[],
+        status:'fail',monthlyEFT:null,vehicleCount:0,putInStop:false,checks:{}});
+    }
+    document.getElementById(spinId)?.remove();
+    renderTable();updateSummary();
+  }
+  fill.style.width='100%';
+  label.textContent=`✓ Done! Processed ${pdfs.length} quote${pdfs.length>1?'s':''}.`;
+  setTimeout(()=>{document.getElementById('progressWrap').style.display='none';},2500);
+}
+
+async function extractPDFText(file){
+  const buf=await file.arrayBuffer();
+  const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+  let text='';
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p);
+    const content=await page.getTextContent();
+    let pageText='';
+    let lastY=null;
+    for(const item of content.items){
+      if(lastY!==null&&Math.abs(item.transform[5]-lastY)>5) pageText+='\n';
+      pageText+=item.str+' ';
+      lastY=item.transform[5];
+    }
+    text+=pageText+'\n';
+  }
+  return text;
+}
+
+// ── MAIN ANALYSIS ──
+function analyzeQuote(text,filename){
+  const t=text;
+  const errors=[];
+  const warnings=[];
+
+  // This project accepts only PDFs issued by the required agency.
+  const requiredAgency='Tiffany Hendrix Agency';
+  const normalizedText=String(t||'').replace(/\s+/g,' ').trim().toLowerCase();
+  const agencyOk=normalizedText.includes(requiredAgency.toLowerCase());
+  if(!agencyOk) errors.push(`Agency mismatch: PDF must contain "${requiredAgency}"`);
+
+  // ── Carrier & Quote Type Detection ──
+  const isBristolSummary=/Bristol\s+West\s+Auto\s+quote\s+summary/i.test(t);
+  const isFarmersSummary=/Farmers\s+Auto\s+quote\s+summary/i.test(t);
+  const hasFarmersHome=/Auto\/Farmers\s+Home/i.test(t);
+  const hasAutoHomeCondo=/Auto\/Home\s+or\s+Condo/i.test(t);
+  const hasRentersQuote=/(?:Farmers\s+)?Renters\s+quote(?:\s+(?:summary|details))?/i.test(t);
+  const discountKind=hasRentersQuote?'renters':'home';
+
+  let quoteType='Unknown';
+  if(isFarmersSummary) quoteType='Farmers';
+  else if(isBristolSummary&&hasFarmersHome) quoteType='Farmer-Bristol';
+  else if(isBristolSummary) quoteType='Bristol West';
+
+  // ── Customer Name ──
+  const nameMatch=t.match(/Prepared\s+for\s+\n?\s*([A-Z][a-zA-Z\s]+?)(?:\n|Effective|Quote number)/);
+  const name=nameMatch?nameMatch[1].trim().split('\n')[0].trim():filename.replace(/\.pdf$/i,'').replace(/_/g,' ');
+
+  // ── Monthly EFT — AUTO ONLY ──
+  // Rules:
+  // 1) Read only from the Auto quote details section.
+  // 2) Stop before any Home quote summary/details section so Home EFT can never bleed into Auto.
+  // 3) If Auto explicitly uses Monthly EFT, capture the installment amount.
+  // 4) If Auto is Paid in full / 1 Pay only, keep monthlyEFT=null and show the BW warning.
+  const autoSectionIdxEarly=t.search(/Auto\s+quote\s+details/i);
+
+  // Find the FIRST Home section that occurs after Auto details (summary OR details).
+  let homeSectionIdxEarly=-1;
+  if(autoSectionIdxEarly>-1){
+    const afterAuto=t.substring(autoSectionIdxEarly);
+    const relHomeIdx=afterAuto.search(/(?:Farmers\s+)?Home\s+quote\s+(?:summary|details)/i);
+    if(relHomeIdx>-1) homeSectionIdxEarly=autoSectionIdxEarly+relHomeIdx;
+  }
+
+  let autoChunkEarly='';
+  if(autoSectionIdxEarly>-1){
+    const autoEnd=homeSectionIdxEarly>autoSectionIdxEarly?homeSectionIdxEarly:t.length;
+    autoChunkEarly=t.substring(autoSectionIdxEarly,autoEnd);
+  }
+
+  let monthlyEFT=null;
+
+  // Method 1 — Options summary, e.g.:
+  // Installments $1,420.88/mo
+  // Pay plan Monthly EFT
+  const autoOptionEFT=autoChunkEarly.match(
+    /Installments\s+\$?([\d,]+(?:\.\d{1,2})?)\s*\/?\s*mo[\s\S]{0,180}?Pay\s+plan\s+Monthly\s+EFT/i
+  );
+  if(autoOptionEFT){
+    monthlyEFT=parseFloat(autoOptionEFT[1].replace(/,/g,''));
+  }
+
+  // Method 2 — Payment plans table, e.g.:
+  // Monthly EFT $1,353.70 $1,420.88 $8,398.10
+  //                  due today   installment   total
+  if(monthlyEFT===null){
+    const autoPaymentTableEFT=autoChunkEarly.match(
+      /Monthly\s+EFT\s+\$?([\d,]+(?:\.\d{1,2})?)\s+\$?([\d,]+(?:\.\d{1,2})?)(?:\s+\$?[\d,]+(?:\.\d{1,2})?)?/i
+    );
+    if(autoPaymentTableEFT){
+      monthlyEFT=parseFloat(autoPaymentTableEFT[2].replace(/,/g,''));
+    }
+  }
+
+  const eftAutoMissing=monthlyEFT===null||Number.isNaN(monthlyEFT);
+  if(eftAutoMissing){
+    monthlyEFT=null;
+    errors.push('Monthly EFT auto not available — use BW');
+  }
+
+  // ── Dates — exactly 7 days from Prepared on ──
+  const prepMatch=t.match(/Prepared\s+on\s+(\d{2}\/\d{2}\/\d{2,4})/i);
+  const startMatch=t.match(/Policy\s+start\s+date\s+\n?\s*([A-Za-z]+\s+\d+,?\s*\d{4})/i);
+  let dateOk=false,dateDiff=null,prepDateStr='',startDateStr='';
+  if(prepMatch&&startMatch){
+    prepDateStr=prepMatch[1];startDateStr=startMatch[1].trim();
+    const pd=parseDate(prepDateStr);
+    const sd=parseDate(startDateStr);
+    if(pd&&sd){
+      dateDiff=Math.round((sd-pd)/(1000*60*60*24));
+      dateOk=(dateDiff===7);
+      if(dateDiff<7) errors.push(`Policy start date too soon (${dateDiff} days — must be exactly 7)`);
+      else if(dateDiff>7) errors.push(`Policy start date too far out (${dateDiff} days — must be exactly 7)`);
+    }
+  } else warnings.push('Could not verify policy start date');
+
+  // ── Vehicles & Drivers ──
+  const vehicles=extractVehicles(t);
+  const vehicleCount=vehicles.length;
+  const drivers=extractDrivers(t);
+
+  // PIP age check handled after carrier checks below
+
+  // ── Run type-specific checks ──
+  if(quoteType==='Farmers') checkFarmers(t,errors,warnings,vehicles);
+  else if(quoteType==='Farmer-Bristol') checkFarmerBristol(t,errors,warnings,vehicles);
+  else if(quoteType==='Bristol West') checkPureBristol(t,errors,warnings,vehicles);
+  else warnings.push('Quote type could not be identified');
+
+  // ── Premium Threshold ──
+  // Mirvat: High Price checking is currently disabled. Monthly EFT is displayed
+  // for reference only and never flags the quote or puts it in STOP.
+  let premiumOk=true,putInStop=false;
+
+  // ── PIP Age-Based Check ──
+  // All drivers 65+ → must be Opt.6
+  // Any driver 64 or below → must be Opt.3
+  const pipLine2=t.match(/Personal\s+(?:Injury\s+)?[Pp]rotection\s+[Mm]edical\s+(Opt\.[\s\S]{0,80}?)(?=PIP\s+medical|PIP\s+wage|Work\s+loss)/i);
+  const pipStr2=pipLine2?pipLine2[1].trim():'';
+  const hasOpt3=/Opt\.\s*3/i.test(pipStr2);
+  const hasOpt6=/Opt\.\s*6/i.test(pipStr2);
+  if(drivers.length>0){
+    const allOver65=drivers.every(d=>d.age>=65);
+    const anyUnder65=drivers.some(d=>d.age<65);
+    if(allOver65&&hasOpt3) errors.push('All drivers are 65+ — PIP must be Opt.6 (Medicare), not Opt.3');
+    if(anyUnder65&&hasOpt6) errors.push('Driver(s) under 65 on policy — PIP must be Opt.3, not Opt.6');
+  }
+
+  // ── Bundle Detection & Property Checks ──
+  const isHomeBundle=/Farmers\s+[Hh]ome\s+quote/i.test(t)||/Farmers\s+Home\s+quote\s+summary/i.test(t);
+  const isRentersBundle=hasRentersQuote;
+  const isBundle=isHomeBundle||isRentersBundle;
+  let homeData={
+    isBundle,isHomeBundle,isRentersBundle,
+    coverageStandardOk:true,allPerilsOk:true,rentersPersonalPropertyOk:true,
+    fireProtectionOk:true,theftProtectionOk:true,
+    dwelling:null,homePay1:null
+  };
+  if(isHomeBundle){
+    homeData.fireProtectionOk=/\bFire\s+protection\b/i.test(t);
+    homeData.theftProtectionOk=/\bTheft\s+protection\b/i.test(t);
+    if(!homeData.fireProtectionOk) errors.push('Home: Fire protection discount is MISSING');
+    if(!homeData.theftProtectionOk) errors.push('Home: Theft protection discount is MISSING');
+  }
+  if(isHomeBundle){
+    // Mirvat Home rule: Special limits must be Standard and the
+    // All Perils deductible must be $5,000.
+    // Replacement Cost selections are not QC requirements for this agency.
+    homeData.coverageStandardOk=/Special\s+limits[\s\S]{0,80}?\bStandard\b/i.test(t);
+    if(!homeData.coverageStandardOk) errors.push('Home: Special limits must be Standard');
+    homeData.allPerilsOk=/Deductibles?[\s\S]{0,160}?All\s+perils\s+\$5,?000(?:\.00)?\b/i.test(t);
+    if(!homeData.allPerilsOk) errors.push('Home: All perils deductible must be $5,000');
+
+    // Dwelling amount (Coverage A)
+    const dwellingMatch=t.match(/Dwelling\s+\$([\d,]+)/i);
+    homeData.dwelling=dwellingMatch?parseInt(dwellingMatch[1].replace(/,/g,'')):null;
+    // Home annual amount WITHOUT fees. PDF.js can split four-digit amounts like
+    // "$1,023.00" into "$1, 023.00", so normalize those item-boundary spaces first.
+    // Start at Home quote details to prevent the Auto payment plan being selected.
+    const normalizedMoneyText=t
+      .replace(/(\d),\s+(?=\d{3}(?:\D|$))/g,'$1,')
+      .replace(/\$\s+(?=\d)/g,'$');
+    const homeDetailsIdx=normalizedMoneyText.search(/Home\s+quote\s+details/i);
+    const homeChunk=homeDetailsIdx>-1
+      ? normalizedMoneyText.substring(homeDetailsIdx,homeDetailsIdx+14000)
+      : normalizedMoneyText;
+
+    // "Term Premium" is already the annual premium excluding fees (preferred).
+    const termPremiumMatch=homeChunk.match(
+      /Term\s+Premium\s+\$([\d,]+(?:\.\d{1,2})?)(?:\s*\/\s*12\s*-?\s*mo)?/i
+    );
+    let rawHomePay=termPremiumMatch
+      ? parseFloat(termPremiumMatch[1].replace(/,/g,''))
+      : null;
+
+    // Fallback for layouts that only show the 1 Pay total including fees.
+    if(rawHomePay===null){
+      const home1PayMatch=homeChunk.match(
+        /1\s+Pay\s+\$([\d,]+(?:\.\d{1,2})?)\s+-?\s*\$([\d,]+(?:\.\d{1,2})?)/i
+      ) || homeChunk.match(/1\s+Pay\s+\$([\d,]+(?:\.\d{1,2})?)/i);
+      if(home1PayMatch){
+        rawHomePay=parseFloat((home1PayMatch[2]||home1PayMatch[1]).replace(/,/g,''));
+        const homeFeeMatch=homeChunk.match(
+          /\*?Includes\s+\$([\d,]+(?:\.\d{1,2})?)\s+(?:in\s+fees|Membership\s+fee)/i
+        );
+        const homeFee=homeFeeMatch
+          ? parseFloat(homeFeeMatch[1].replace(/,/g,''))
+          : 0;
+        rawHomePay-=homeFee;
+      }
+    }
+    homeData.homePay1=rawHomePay;
+  }
+
+  if(isRentersBundle){
+    // Mirvat Renters rule: $10,000 Personal Property and $1,000 All Perils deductible.
+    homeData.rentersPersonalPropertyOk=/Personal\s+property\s+\$10,?000(?:\.00)?\b/i.test(t);
+    if(!homeData.rentersPersonalPropertyOk) errors.push('Renters: Personal property must be $10,000');
+    homeData.allPerilsOk=/Deductibles?[\s\S]{0,160}?All\s+perils\s+\$1,?000(?:\.00)?\b/i.test(t);
+    if(!homeData.allPerilsOk) errors.push('Renters: All perils deductible must be $1,000');
+  }
+
+  // ── AgencyZoom Checklist Data ──
+  // Vehicles: Year Make Model (first word only), comma separated
+  const azVehicles=vehicles.map(v=>{
+    // Model from PDF is like "Chevrolet Blazer ..." or "Lincoln Nautilus ..."
+    // We want: Year Make FirstModelWord e.g. "2026 Chevrolet Blazer"
+    const rawWords=v.model.trim().split(/\s+/).filter(w=>w&&!/^\.+$/.test(w)&&w!=='...');
+    // Take first 2 words (Make + Model) only
+    const cleanParts=rawWords.slice(0,2).map(w=>w.replace(/\.+$/,'').replace(/\.\.\.$/,''));
+    return v.year+' '+cleanParts.join(' ');
+  }).join(', ');
+
+  // Monthly Auto — round
+  const azMonthly=monthlyEFT?Math.round(monthlyEFT):null;
+
+  // Auto_6months = 1 Pay amount WITHOUT fees
+  // IMPORTANT: use the complete Auto section (already isolated above as autoChunkEarly)
+  // so the Membership fee line is not missed on longer quotes.
+  let az6months=null;
+  const autoChunk=autoChunkEarly || '';
+
+  // Patterns:
+  // Farmers:     1 Pay $1,981.00 - $1,981.00
+  // Bristol West:1 Pay $1,105.24 $0.00 $1,105.24
+  const onePay1=autoChunk.match(/1\s+Pay\s+\$([\d,]+\.?\d*)\s+\$0\.00\s+\$([\d,]+\.?\d*)/i);
+  const onePay2=autoChunk.match(/1\s+Pay\s+\$([\d,]+\.?\d*)\s+-\s+\$([\d,]+\.?\d*)/i);
+  const onePay3=autoChunk.match(/1\s+Pay\s+\$([\d,]+\.?\d*)/i);
+
+  let rawAuto6=null;
+  if(onePay1) rawAuto6=parseFloat(onePay1[2].replace(/,/g,''));
+  else if(onePay2) rawAuto6=parseFloat(onePay2[2].replace(/,/g,''));
+  else if(onePay3) rawAuto6=parseFloat(onePay3[1].replace(/,/g,''));
+
+  // Subtract Auto fees from 1 Pay:
+  // e.g. $1,981 - $60 Membership fee = $1,921
+  if(rawAuto6!==null){
+    const autoFeeMatch=autoChunk.match(
+      /\*?Includes\s+\$([\d,]+(?:\.\d{1,2})?)\s+(?:in\s+fees|Membership\s+fee)/i
+    );
+    const autoFee=autoFeeMatch
+      ? parseFloat(autoFeeMatch[1].replace(/,/g,''))
+      : 0;
+
+    az6months=Math.round(rawAuto6-autoFee);
+  }
+
+  // Home Annual — round
+  const azHomeAnnual=homeData.homePay1?Math.round(homeData.homePay1):null;
+
+  // Home Coverage A always uses the extracted Dwelling amount.
+  const azCoverageA=homeData.dwelling;
+
+  const azChecklist={vehicles:azVehicles,monthly:azMonthly,sixMonths:az6months,
+    homeAnnual:azHomeAnnual,coverageA:azCoverageA,eftAutoMissing:eftAutoMissing};
+
+  const status=errors.length>0?'fail':warnings.length>0?'warn':'pass';
+  return{filename,name,quoteType,discountKind,monthlyEFT,vehicleCount,vehicles,drivers,
+    errors,warnings,status,putInStop,homeData,azChecklist,
+    checks:{dateOk,dateDiff,prepDateStr,startDateStr,premiumOk}};
+}
+
+function parseDate(str){
+  const m1=str.match(/(\d{2})\/(\d{2})\/(\d{2,4})/);
+  if(m1){let y=parseInt(m1[3]);if(y<100)y+=2000;return new Date(y,parseInt(m1[1])-1,parseInt(m1[2]));}
+  const m2=str.match(/([A-Za-z]+)\s+(\d+),?\s*(\d{4})/);
+  if(m2)return new Date(`${m2[1]} ${m2[2]}, ${m2[3]}`);
+  return null;
+}
+
+// ── EXTRACT VEHICLES ──
+// Reads from summary page "Coverage for your property" table
+// Two layouts exist:
+// A) Interleaved: VehName, val1, val2, VehName, val1, val2 (values right after each name)
+// B) Grouped: VehName, VehName, VehName, val1, val2, val1, val2 (all names then all values)
+function extractVehicles(t){
+  const vehicles=[];
+  const lines=t.split('\n').map(l=>l.trim()).filter(Boolean);
+  const isVal=v=>/^\$[\d,]+$/.test(v)||/^-$/.test(v)||/^included$/i.test(v)||/^none$/i.test(v);
+  const toNum=v=>{
+    if(!v||/^[-]$/.test(v)||/^(included|none)$/i.test(v)) return null;
+    return v.replace(/[$,]/g,'');
+  };
+  const isVehLine=l=>/^((?:19|20)\d{2})\s+[A-Za-z]/.test(l);
+
+  // ── STEP 1: Find "Coverage for your property" table on summary page ──
+  let tableStart=-1;
+  for(let i=0;i<lines.length;i++){
+    if(/Coverage for your property/i.test(lines[i])){
+      for(let j=i+1;j<Math.min(i+20,lines.length);j++){
+        if(isVehLine(lines[j])){tableStart=i;break;}
+      }
+      if(tableStart>-1) break;
+    }
+  }
+  if(tableStart===-1) return vehicles;
+
+  // ── STEP 2: Detect which columns exist in the summary table header ──
+  // The header line(s) between "Coverage for your property" and the first vehicle
+  // tell us whether Comprehensive and/or Collision columns are present.
+  // e.g. "Vehicle Comprehensive Collision" → both
+  //      "Vehicle Collision"               → collision only (no comp)
+  //      "Vehicle"                         → PLPD only (no values expected)
+  let hasCompCol=false, hasCollCol=false;
+  for(let i=tableStart;i<Math.min(tableStart+10,lines.length);i++){
+    const l=lines[i];
+    if(/Comprehensive/i.test(l)) hasCompCol=true;
+    if(/Collision/i.test(l)) hasCollCol=true;
+    if(isVehLine(l)) break; // stop at first vehicle line
+  }
+  // If neither header found, default to both (older layout)
+  if(!hasCompCol&&!hasCollCol){ hasCompCol=true; hasCollCol=true; }
+
+  // ── STEP 3: Collect entries (skip noise) ──
+  const entries=[];
+  for(let i=tableStart+1;i<lines.length&&i<tableStart+100;i++){
+    const line=lines[i];
+    if(/Additional selected|Discounts \/|Page \d+\s+of/i.test(line)) break;
+    if(/^Vehicle$|^Comprehensive$|^Collision$|^Standard$|Aaron Budnick|License|farmersagent|\(517\)/i.test(line)) continue;
+    if(/^Comp(rehensive)?\s+Coll(ision)?$/i.test(line)) continue;
+    entries.push(line);
+  }
+
+  // ── STEP 4: Parse vehicle names + values using column knowledge ──
+  const tempVehicles=[];
+  let i=0;
+  while(i<entries.length){
+    const line=entries[i];
+    const m=line.match(/^((?:19|20)\d{2})\s+([A-Za-z0-9][a-zA-Z0-9 \-\/\.]{2,50}?)(?=\s+[\$\(]|\s{2,}|$)/) || line.match(/^((?:19|20)\d{2})\s+([A-Za-z0-9][a-zA-Z0-9 \-\/\.]{2,50})/);
+    if(m){
+      const year=parseInt(m[1]);
+      const model=m[2].trimEnd(); // trimEnd to remove trailing spaces before value
+      let compVal=null, collVal=null;
+
+      // Extract whatever comes AFTER the model name on the same line
+      // e.g. "2011 Chevrolet Camaro ...   $1,000" → afterModel = "$1,000"
+      // Extract afterModel — strip truncated suffix like (Ne... or & C... before values
+      let afterModel=line.slice(m[0].length).trim();
+      // If afterModel starts with ( or & (truncated name suffix), skip to first $
+      if(afterModel.startsWith('(')||afterModel.startsWith('&')){
+        const dollarIdx=afterModel.indexOf('$');
+        if(dollarIdx>-1) afterModel=afterModel.slice(dollarIdx).trim();
+        else afterModel='';
+      }
+
+      // Normalize afterModel — remove "Standard/Limited/Broadened" attached to values
+      // e.g. "$1,000Standard" → "$1,000" and "$1,000 $1,000Standard" → "$1,000 $1,000"
+      const normAfter = afterModel.replace(/(\$[\d,]+|-)(Standard|Limited|Broadened)/gi,'$1 $2').trim();
+      // Check for two inline values: "$1,000 $1,000"
+      const inlineTwo=normAfter.match(/^(\$[\d,]+|-)\s+(\$[\d,]+|-)(?:\s+(?:Standard|Limited|Broadened))?\s*$/i);
+      // Check for one inline value: "$1,000" or "$1,000 Standard"
+      const inlineOne=normAfter.match(/^(\$[\d,]+|-)(?:\s+(?:Standard|Limited|Broadened))?\s*$/i);
+
+      if(inlineTwo&&hasCompCol&&hasCollCol){
+        compVal=toNum(inlineTwo[1]);
+        collVal=toNum(inlineTwo[2]);
+      } else if(inlineTwo&&!hasCompCol&&hasCollCol){
+        collVal=toNum(inlineTwo[1]);
+      } else if(inlineTwo&&hasCompCol&&!hasCollCol){
+        compVal=toNum(inlineTwo[1]);
+      } else if(inlineOne){
+        // Single value inline — assign to whichever column exists
+        if(!hasCompCol&&hasCollCol) collVal=toNum(inlineOne[1]);
+        else if(hasCompCol&&!hasCollCol) compVal=toNum(inlineOne[1]);
+        else compVal=toNum(inlineOne[1]); // fallback: treat as comp
+      } else {
+        // Values on next lines — skip "Standard/Limited" noise lines
+        const nextLines=[];
+        for(let k=i+1;k<Math.min(i+5,entries.length);k++){
+          const nl=entries[k];
+          if(/^(Standard|Limited|Broadened|Michigan)/i.test(nl)) continue;
+          if(isVal(nl)) nextLines.push(nl);
+          if(nextLines.length===2) break;
+        }
+        if(hasCompCol&&hasCollCol){
+          if(nextLines[0]!==undefined) compVal=toNum(nextLines[0]);
+          if(nextLines[1]!==undefined) collVal=toNum(nextLines[1]);
+        } else if(!hasCompCol&&hasCollCol){
+          if(nextLines[0]!==undefined) collVal=toNum(nextLines[0]);
+        } else if(hasCompCol&&!hasCollCol){
+          if(nextLines[0]!==undefined) compVal=toNum(nextLines[0]);
+        }
+      }
+      tempVehicles.push({year,model,compVal,collVal,_entryIndex:i});
+    }
+    i++;
+  }
+
+  // ── STEP 5: Grouped layout fallback ──
+  // If all vehicles still have null values, try grouped layout
+  const allNull=tempVehicles.length>0&&tempVehicles.every(v=>v.compVal===null&&v.collVal===null);
+  if(allNull){
+    const valBlock=entries.filter(e=>isVal(e));
+    const colCount=(hasCompCol?1:0)+(hasCollCol?1:0)||2;
+    for(let j=0;j<tempVehicles.length;j++){
+      let vi=0;
+      if(hasCompCol){ tempVehicles[j].compVal=valBlock[j*colCount+vi]!==undefined?toNum(valBlock[j*colCount+vi]):null; vi++; }
+      if(hasCollCol){ tempVehicles[j].collVal=valBlock[j*colCount+vi]!==undefined?toNum(valBlock[j*colCount+vi]):null; }
+    }
+  }
+
+    for(const v of tempVehicles){
+    delete v._entryIndex;
+    vehicles.push(v);
+  }
+  return vehicles;
+}
+
+// ── EXTRACT DRIVERS ──
+function extractDrivers(t){
+  const drivers=[];
+  const seen=new Set();
+  const re=/\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+),\s*(\d{2})\b/g;
+  let m;
+  while((m=re.exec(t))!==null){
+    const name=m[1].trim();
+    const age=parseInt(m[2]);
+    const key=name+'|'+age;
+    if(age>=16&&age<=100&&!seen.has(key)&&!/^(Aaron|Budnick|Agency|Farmers|Bristol)/i.test(name)&&name.includes(' ')){
+      seen.add(key);drivers.push({name,age});
+    }
+  }
+  return drivers;
+}
+
+// ── COMMON LIABILITY & PIP CHECKS ──
+function checkLiabilityPIP(t,errors){
+  if(!/Bodily\s+injury\s+\$100,000\/\$300,000/i.test(t)) errors.push('Bodily Injury must be $100,000/$300,000');
+  if(!/Property\s+damage\s+\$50,000(?!\s*\/)/i.test(t)) errors.push('Property Damage must be $50,000');
+  if(!/(?:UM\/UIM|Uninsured\s+motorist|Underinsured\s+motorist)[^\n$]*\$100,000\/\$300,000/i.test(t)) errors.push('UM/UIM must be $100,000/$300,000');
+  const pipLine=t.match(/Personal\s+(?:Injury\s+)?[Pp]rotection\s+[Mm]edical\s+(Opt\.[\s\S]{0,80}?)(?=PIP\s+medical|PIP\s+wage|Work\s+loss)/i);
+  const pipStr=pipLine?pipLine[1].trim():'';
+  const isOpt3=/Opt\.\s*3/i.test(pipStr);
+  const isOpt6=/Opt\.\s*6/i.test(pipStr);
+  if(!isOpt3&&!isOpt6) errors.push(`PIP must be Opt.3 or Opt.6 (found: ${pipStr.substring(0,30)||'not found'})`);
+  if(isOpt3){
+    if(!/\$250,000[\s\S]{0,10}\/\$500/i.test(t)&&!/no\s+exclusions[\s\S]{0,10}\/\$500/i.test(t))
+      errors.push('PIP deductible must be $500 for Opt.3');
+  }
+  if(isOpt6&&!/\/\$0/i.test(t)) errors.push('PIP deductible must be $0 for Opt.6');
+  if(!/PIP\s+medical\s+Primary/i.test(t)) errors.push('PIP Medical must be Primary');
+  if(!/PIP\s+wage\s+loss\s+Excess/i.test(t)) errors.push('PIP Wage Loss must be Excess');
+}
+
+// ── TYPE 1: FARMERS ──
+function checkFarmers(t,errors,warnings,vehicles){
+  checkLiabilityPIP(t,errors);
+  if(/Signal\s+by\s+Farmers/i.test(t)) errors.push('Signal by Farmers must be REMOVED');
+  const isRenters=/(?:Farmers\s+)?Renters\s+quote(?:\s+(?:summary|details))?/i.test(t);
+  if(isRenters){
+    if(!/Auto\/Renters/i.test(t)) errors.push('Farmers Renters: Auto/Renters discount is MISSING');
+  }else if(!/Auto\/Home\s+or\s+Condo/i.test(t)){
+    errors.push('Farmers Home: Auto/Home or Condo discount is MISSING');
+  }
+  checkVehicleCoverage(t,vehicles,errors,'Enhanced');
+}
+
+// ── TYPE 2: FARMER-BRISTOL ──
+function checkFarmerBristol(t,errors,warnings,vehicles){
+  checkLiabilityPIP(t,errors);
+  if(/Signal\s+by\s+Farmers/i.test(t)) errors.push('Signal by Farmers must be REMOVED');
+  if(!/Auto\/Farmers\s+Home/i.test(t)) errors.push('Farmer-Bristol: Auto/Farmers Home discount is MISSING');
+  checkVehicleCoverage(t,vehicles,errors,'Yes');
+}
+
+// ── TYPE 3: PURE BRISTOL WEST ──
+function checkPureBristol(t,errors,warnings,vehicles){
+  checkLiabilityPIP(t,errors);
+  // Extract discount section from detail page
+  const discMatch=t.match(/Discounts\/Preferences\s+([\s\S]{0,400}?)(?:Included|Payment\s+plans)/i);
+  const discText=discMatch?discMatch[1]:'';
+  // Paperless must be present
+  if(!/Go\s+Paperless|Paperless/i.test(discText)) errors.push('Bristol West: Paperless discount is MISSING');
+  // Only flag manually added discounts (not defaults: EFT, Safe Driver, Preferred Driver)
+  const forbidden=[
+    {name:'Signal by Farmers',rx:/Signal\s+by\s+Farmers/i},
+    {name:'Homeowner',rx:/\bHomeowner\b/i},
+    {name:'Auto\/Farmers Home',rx:/Auto\/Farmers\s+Home/i},
+    {name:'Auto\/Home or Condo',rx:/Auto\/Home\s+or\s+Condo/i},
+    {name:'Auto\/Renters',rx:/Auto\/Renters/i},
+  ];
+  for(const f of forbidden){
+    if(f.rx.test(discText)) errors.push(`Bristol West: "${f.name}" should NOT be checked`);
+  }
+  checkVehicleCoverage(t,vehicles,errors,'Yes');
+}
+
+// ── VEHICLE COVERAGE CHECK ──
+// Uses summary page values (compVal/collVal) extracted with vehicle
+function checkVehicleCoverage(t,vehicles,errors,roadsideRequired){
+  const tUp=t.toUpperCase();
+
+  // Locate the most likely detailed coverage heading for each vehicle. A quote can
+  // mention the same vehicle in summaries and detail pages, so prefer the mention
+  // followed by coverage labels instead of taking the first match in the PDF.
+  const vehicleStarts=vehicles.map(v=>{
+    const words=v.model.split(/\s+/).filter(Boolean);
+    const keys=[
+      `${v.year} ${words.slice(0,3).join(' ')}`.toUpperCase(),
+      `${v.year} ${words[0]||''}`.toUpperCase()
+    ].filter((key,index,array)=>key.trim()&&array.indexOf(key)===index);
+    let bestIndex=-1;
+    let bestScore=-1;
+    for(const key of keys){
+      let from=0;
+      while(from<tUp.length){
+        const found=tUp.indexOf(key,from);
+        if(found===-1) break;
+        const immediate=t.substring(found,found+220);
+        const preview=t.substring(found,found+600);
+        const score=(/\bCoverage\b/i.test(immediate)?20:0)+[
+          /\bCoverage\b/i,
+          /Liability\s+and\s+policy\s+coverages/i,
+          /Comprehensive/i,
+          /Collision/i,
+          /Roadside\s+assistance/i,
+          /MCCA\s+assessment/i,
+          /Vehicle\s+premium/i
+        ].reduce((total,rx)=>total+(rx.test(preview)?1:0),0);
+        // Prefer the later occurrence when scores tie; detailed pages normally
+        // follow summary pages in the extracted PDF text.
+        if(score>=bestScore){bestScore=score;bestIndex=found;}
+        from=found+key.length;
+      }
+    }
+    return {vehicle:v,start:bestIndex};
+  });
+
+  const orderedStarts=vehicleStarts
+    .filter(item=>item.start>=0)
+    .map(item=>item.start)
+    .sort((a,b)=>a-b);
+
+  for(let i=0;i<vehicles.length;i++){
+    const v=vehicles[i];
+    const yr=v.year;
+    const short=`${yr} ${v.model.split(' ').slice(0,3).join(' ')}`;
+
+    // Normalize compVal/collVal to number or null for reliable comparison
+    const normalizeVal=val=>{
+      if(val===null||val===undefined) return null;
+      const n=parseInt(String(val).replace(/[$,]/g,''),10);
+      return isNaN(n)?null:n;
+    };
+    const compNum=normalizeVal(v.compVal);
+    const collNum=normalizeVal(v.collVal);
+    const hasComp=compNum!==null;
+    const hasColl=collNum!==null;
+    const compIs1000=compNum===1000;
+    const collIs1000=collNum===1000;
+
+    // Roadside must appear inside this vehicle's own coverage section. Stop at
+    // the next vehicle heading so another vehicle's roadside cannot cause a pass.
+    const start=vehicleStarts[i].start;
+    const nextStart=orderedStarts.find(pos=>pos>start);
+    const end=nextStart===undefined?t.length:nextStart;
+    let vehSection=start>=0?t.substring(start,end):'';
+    const premiumIndex=vehSection.search(/Vehicle\s+premium/i);
+    if(premiumIndex>=0){
+      const premiumLineEnd=vehSection.indexOf('\n',premiumIndex);
+      if(premiumLineEnd>=0) vehSection=vehSection.substring(0,premiumLineEnd);
+    }
+    const roadsideMatch=vehSection.match(/Roadside\s+assistance\b([\s\S]{0,80})/i);
+    const hasRoadside=!!roadsideMatch;
+    const roadsideOk=hasRoadside&&(roadsideRequired==='Yes'
+      ?/\bYes\b/i.test(roadsideMatch[1])
+      :/\bEnhanced\b/i.test(roadsideMatch[1]));
+
+    if(yr>=2016){
+      if(!hasComp) errors.push(`${short}: Missing Comprehensive (2016+ = Full Coverage)`);
+      else if(!compIs1000) errors.push(`${short}: Comprehensive deductible must be $1,000 (found $${compNum})`);
+      if(!hasColl) errors.push(`${short}: Missing Collision (2016+ = Full Coverage)`);
+      else if(!collIs1000) errors.push(`${short}: Collision deductible must be $1,000 (found $${collNum})`);
+    } else {
+      if(hasComp) errors.push(`${short}: Has Comprehensive — 2015 and older must be PLPD only`);
+      if(hasColl) errors.push(`${short}: Has Collision — 2015 and older must be PLPD only`);
+    }
+    if(!hasRoadside) errors.push(`${short}: Roadside Assistance is missing — must be ${roadsideRequired}`);
+    else if(!roadsideOk) errors.push(`${short}: Roadside Assistance must be ${roadsideRequired}`);
+  }
+}
+
+// ── RENDER TABLE ──
+function renderTable(){
+  const tbody=document.getElementById('resultsBody');
+  const search=document.getElementById('searchBox').value.toLowerCase();
+  const filtered=allResults.filter(r=>{
+    const mf=activeFilter==='all'||r.status===activeFilter;
+    const ms=!search||r.name.toLowerCase().includes(search)||r.filename.toLowerCase().includes(search);
+    return mf&&ms;
+  });
+  tbody.innerHTML='';
+  if(!filtered.length){
+    tbody.innerHTML=`<tr><td colspan="7" style="padding:40px;text-align:center;color:var(--muted);font-size:13px;">No results match.</td></tr>`;
+    return;
+  }
+  filtered.forEach((r,idx)=>{
+    const uid='r_'+idx+'_'+Math.random().toString(36).substr(2,5);
+    const tr=document.createElement('tr');
+    tr.className='row-card';
+    const statusBadge=r.status==='pass'?`<span class="status-badge status-pass">✓ PASS</span>`:
+      r.status==='warn'?`<span class="status-badge status-warn">⚠ REVIEW</span>`:
+      `<span class="status-badge status-fail">✗ FLAGGED</span>`;
+    const typeChip=r.quoteType==='Farmers'?`<span class="chip chip-farmers">Farmers</span>`:
+      r.quoteType==='Farmer-Bristol'?`<span class="chip chip-farmer-bristol">Farmer→Bristol</span>`:
+      r.quoteType==='Bristol West'?`<span class="chip chip-bristol">Bristol West</span>`:
+      `<span class="chip chip-unknown">Unknown</span>`;
+    const pills=[
+      ...r.errors.map(e=>`<span class="err-pill">⚑ ${e}</span>`),
+      ...r.warnings.map(w=>`<span class="warn-pill">⚠ ${w}</span>`)
+    ].join('')||`<span class="ok-text">✓ All checks passed</span>`;
+    const eft=r.monthlyEFT?`$${r.monthlyEFT.toFixed(2)}/mo`:'—';
+    const stopBanner='';
+    tr.innerHTML=`<td colspan="7">
+      ${stopBanner}
+      <div class="row-main" onclick="toggleDetail('${uid}')">
+        <span class="row-expand" id="exp_${uid}">▶</span>
+        <div class="col-name"><div class="cname">${r.name}</div><div class="fname">${r.filename}</div></div>
+        <div>${typeChip}</div>
+        <div style="font-size:13px;color:var(--text2);">${r.vehicleCount} vehicle${r.vehicleCount!==1?'s':''}</div>
+        <div style="font-size:13px;">${eft}</div>
+        <div>${statusBadge}</div>
+        <div>${pills}</div>
+        <div><button class="debug-btn" onclick="event.stopPropagation();openDebug(this)" title="Show raw parse debug">🔍 Debug</button></div>
+      </div>
+      <div class="row-details" id="${uid}">${buildDetails(r)}</div>
+    </td>`;
+    tr.dataset.filename=r.filename;
+    tbody.appendChild(tr);
+  });
+}
+
+function toggleDetail(uid){
+  document.getElementById(uid).classList.toggle('open');
+  document.getElementById('exp_'+uid).classList.toggle('open');
+}
+
+function buildDetails(r){
+  const c=r.checks||{};
+  const ck=(ok,label,val='',isWarn=false)=>{
+    const icon=ok?'✓':isWarn?'⚠':'✗';
+    const cls=ok?'ci-ok':isWarn?'ci-warn':'ci-fail';
+    const vc=ok?'ok':isWarn?'neutral':'bad';
+    return `<div class="check-item"><span class="ci-icon ${cls}">${icon}</span>
+      <span class="ci-label">${label}</span>
+      ${val?`<span class="ci-val ${vc}">${val}</span>`:''}</div>`;
+  };
+  // Vehicles
+  let vHTML='';
+  for(const v of r.vehicles){
+    const isNew=v.year>=2016;
+    const roadsideRequired=r.quoteType==='Farmers'?'Enhanced':'Yes';
+    // Use both year AND partial model name to match errors correctly (avoids same-year collision)
+    const shortModel=v.model.split(' ').slice(0,3).join(' ');
+    const vKey=`${v.year} ${shortModel}`.toLowerCase();
+    const cErr=r.errors.some(e=>e.toLowerCase().includes(vKey)&&e.toLowerCase().includes('comprehensive'));
+    const colErr=r.errors.some(e=>e.toLowerCase().includes(vKey)&&e.toLowerCase().includes('collision'));
+    const rErr=r.errors.some(e=>e.toLowerCase().includes(vKey)&&e.toLowerCase().includes('roadside'));
+    vHTML+=`<div class="vehicle-item">
+      <div class="v-name">${v.year} ${v.model.split(' ').slice(0,4).join(' ')}</div>
+      <div class="v-tags"><span class="${isNew?'v-ok':'v-info'}">${isNew?'Full Coverage':'PLPD'}</span></div>
+      <div style="margin-top:5px;display:flex;flex-wrap:wrap;gap:4px;">
+        <span class="${cErr?'v-fail':'v-ok'}">${isNew?(cErr?'✗ Comp missing':'✓ Comp $1,000'):'✓ No Comp'}</span>
+        <span class="${colErr?'v-fail':'v-ok'}">${isNew?(colErr?'✗ Collision missing':'✓ Collision $1,000'):'✓ No Collision'}</span>
+        <span class="${rErr?'v-fail':'v-ok'}">${rErr?'✗ Roadside not '+roadsideRequired:'✓ Roadside '+roadsideRequired}</span>
+      </div>
+    </div>`;
+  }
+  if(!vHTML) vHTML=`<div style="font-size:12px;color:var(--muted);">No vehicles detected</div>`;
+  // Drivers
+  let dHTML='';
+  for(const d of r.drivers){
+    const is65=d.age>=65;
+    dHTML+=`<div class="check-item">
+      <span class="ci-icon ${is65?'ci-warn':'ci-ok'}">${is65?'⚠':'✓'}</span>
+      <span class="ci-label">${d.name}</span>
+      <span class="ci-val ${is65?'bad':'ok'}">Age ${d.age}${is65?' (65+)':''}</span>
+    </div>`;
+  }
+  if(!dHTML) dHTML=`<div style="font-size:12px;color:var(--muted);">No drivers detected</div>`;
+  // Discount label
+  const discLabel=r.quoteType==='Farmers'
+    ?(r.discountKind==='renters'?'Auto/Renters required':'Auto/Home or Condo required'):
+    r.quoteType==='Farmer-Bristol'?'Auto/Farmers Home required':
+    'Paperless only (defaults allowed)';
+  const discOk=r.quoteType==='Farmers'
+    ?(r.discountKind==='renters'
+      ?!r.errors.some(e=>/Auto\/Renters/i.test(e))
+      :!r.errors.some(e=>/Auto\/Home or Condo/i.test(e))):
+    r.quoteType==='Farmer-Bristol'?!r.errors.some(e=>/Auto\/Farmers Home/i.test(e)):
+    !r.errors.some(e=>/Paperless|should NOT/i.test(e));
+  // Premium — informational only; High Price checking is disabled for Mirvat.
+  let premRow;
+  if(r.monthlyEFT){
+    premRow=ck(true,'Monthly EFT — informational only',`$${r.monthlyEFT.toFixed(2)}/mo`);
+  } else {
+    premRow=`<div class="check-item"><span class="ci-icon ci-fail">✗</span><span class="ci-label">Monthly EFT auto not available — use BW</span></div>`;
+  }
+
+  return `<div class="row-details-grid">
+    <div class="detail-group">
+      <h4>Liability</h4>
+      ${ck(!r.errors.some(e=>/Bodily Injury/i.test(e)),'Bodily Injury','$100K/$300K')}
+      ${ck(!r.errors.some(e=>/Property Damage/i.test(e)),'Property Damage','$50,000')}
+      ${ck(!r.errors.some(e=>/UM\/UIM/i.test(e)),'UM/UIM','$100K/$300K')}
+    </div>
+    <div class="detail-group">
+      <h4>PIP</h4>
+      ${ck(!r.errors.some(e=>/PIP must be/i.test(e)),'PIP Option','Opt.3 or Opt.6')}
+      ${ck(!r.errors.some(e=>/PIP deductible/i.test(e)),'PIP Deductible','Opt.3→$500 / Opt.6→$0')}
+      ${ck(!r.errors.some(e=>/PIP Medical/i.test(e)),'PIP Medical','Primary')}
+      ${ck(!r.errors.some(e=>/PIP Wage/i.test(e)),'PIP Wage Loss','Excess')}
+    </div>
+    <div class="detail-group">
+      <h4>Discounts (${r.quoteType})</h4>
+      ${ck(discOk,discLabel)}
+      ${r.quoteType==='Farmers'?ck(!r.errors.some(e=>/Signal/i.test(e)),'Signal discount removed'):''}
+    </div>
+    <div class="detail-group">
+      <h4>Vehicles (${r.vehicles.length})</h4>
+      ${vHTML}
+    </div>
+    <div class="detail-group">
+      <h4>Drivers (${r.drivers.length})</h4>
+      ${dHTML}
+    </div>
+    <div class="detail-group">
+      <h4>Date &amp; Premium</h4>
+      ${ck(c.dateOk,'Policy start date (7 days)',c.dateDiff!==null?`${c.dateDiff} days`:'')}
+      ${premRow}
+    </div>
+  </div>
+  ${r.homeData&&r.homeData.isBundle?buildHomePanel(r):''}
+  `;
+}
+
+function buildHomePanel(r){
+  const h=r.homeData;
+  const isRenters=!!h.isRentersBundle;
+  return '<div class="row-details-grid" style="margin-top:0">'
+    +'<div class="detail-group home-group">'
+    +'<h4>🏠 '+(isRenters?'Renters':'Home')+' QC</h4>'
+    +(isRenters
+      ?(h.rentersPersonalPropertyOk
+        ?'<div class="check-item"><span class="ci-icon ci-ok">✓</span><span class="ci-label">Personal Property</span><span class="ci-val ok">$10,000</span></div>'
+        :'<div class="check-item"><span class="ci-icon ci-fail">✗</span><span class="ci-label">Personal Property</span><span class="ci-val bad">Must be $10,000</span></div>')
+      :(h.coverageStandardOk
+        ?'<div class="check-item"><span class="ci-icon ci-ok">✓</span><span class="ci-label">Special Limits</span><span class="ci-val ok">Standard</span></div>'
+        :'<div class="check-item"><span class="ci-icon ci-fail">✗</span><span class="ci-label">Special Limits</span><span class="ci-val bad">Must be Standard</span></div>'))
+    +(h.allPerilsOk
+      ?'<div class="check-item"><span class="ci-icon ci-ok">✓</span><span class="ci-label">All Perils Deductible</span><span class="ci-val ok">'+(isRenters?'$1,000':'$5,000')+'</span></div>'
+      :'<div class="check-item"><span class="ci-icon ci-fail">✗</span><span class="ci-label">All Perils Deductible</span><span class="ci-val bad">Must be '+(isRenters?'$1,000':'$5,000')+'</span></div>')
+    +(!isRenters?(h.fireProtectionOk
+      ?'<div class="check-item"><span class="ci-icon ci-ok">✓</span><span class="ci-label">Fire Protection Discount</span><span class="ci-val ok">Included</span></div>'
+      :'<div class="check-item"><span class="ci-icon ci-fail">✗</span><span class="ci-label">Fire Protection Discount</span><span class="ci-val bad">Missing</span></div>'):'')
+    +(!isRenters?(h.theftProtectionOk
+      ?'<div class="check-item"><span class="ci-icon ci-ok">✓</span><span class="ci-label">Theft Protection Discount</span><span class="ci-val ok">Included</span></div>'
+      :'<div class="check-item"><span class="ci-icon ci-fail">✗</span><span class="ci-label">Theft Protection Discount</span><span class="ci-val bad">Missing</span></div>'):'')
+    +(h.dwelling?'<div class="check-item"><span class="ci-icon ci-ok">✓</span><span class="ci-label">Dwelling (Cov A)</span><span class="ci-val neutral">$'+h.dwelling.toLocaleString()+'</span></div>':'')
+    +'</div></div>';
+}
+
+function openDebug(btn){
+  const tr=btn.closest('tr');
+  const fn=tr?tr.dataset.filename:'';
+  const r=allResults.find(x=>x.filename===fn);
+  if(r) showDebug(r);
+}
+function showDebug(r){
+  const v=r.vehicles;
+  const raw=r._rawText||'(not stored)';
+  const idx=raw.toLowerCase().indexOf('coverage for your property');
+  const tableSnippet=(idx>-1?raw.substring(idx,idx+600):'(not found)').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const detIdx=raw.toLowerCase().indexOf('vehicles\n');
+  const detSnippet=(detIdx>-1?raw.substring(detIdx,detIdx+800):'(not found)').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  let vRows='';
+  for(const veh of v){
+    const cColor=veh.compVal?'#00e887':'#ff4d6a';
+    const oColor=veh.collVal?'#00e887':'#ff4d6a';
+    const cVal=veh.compVal!==null?'$'+veh.compVal:'null (no comp)';
+    const oVal=veh.collVal!==null?'$'+veh.collVal:'null (no coll)';
+    vRows+='<tr><td>'+veh.year+' '+veh.model+'</td>'
+      +'<td style="color:'+cColor+'">'+cVal+'</td>'
+      +'<td style="color:'+oColor+'">'+oVal+'</td></tr>';
+  }
+
+  const vTable=v.length
+    ?('<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">'
+      +'<tr style="color:#8a97bb;border-bottom:1px solid #252d45;">'
+      +'<th style="text-align:left;padding:6px 8px;">Vehicle</th>'
+      +'<th style="text-align:left;padding:6px 8px;">compVal</th>'
+      +'<th style="text-align:left;padding:6px 8px;">collVal</th>'
+      +'</tr>'+vRows+'</table>')
+    :'<p style="color:#ff4d6a;font-size:13px;margin-bottom:20px;">⚠ No vehicles extracted!</p>';
+
+  const modal=document.createElement('div');
+  modal.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+  const box=document.createElement('div');
+  box.style.cssText='background:#111520;border:1px solid #252d45;border-radius:16px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;';
+
+  box.innerHTML='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">'
+    +'<h3 style="font-family:Orbitron,sans-serif;color:#00d4ff;font-size:16px;">🔍 Debug — '+r.name+'</h3>'
+    +'<button id="dbgClose" style="background:#1e2438;border:1px solid #252d45;color:#dce4f5;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:13px;">✕ Close</button>'
+    +'</div>'
+    +'<h4 style="color:#8a97bb;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Parsed Vehicles</h4>'
+    +vTable
+    +'<h4 style="color:#8a97bb;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Raw — Summary Table</h4>'
+    +'<pre style="background:#080a0f;border:1px solid #252d45;border-radius:8px;padding:12px;font-size:11px;color:#dce4f5;white-space:pre-wrap;overflow-x:auto;margin-bottom:20px;max-height:200px;overflow-y:auto;">'+tableSnippet+'</pre>'
+    +'<h4 style="color:#8a97bb;font-size:12px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Raw — Vehicle Detail Section</h4>'
+    +'<pre style="background:#080a0f;border:1px solid #252d45;border-radius:8px;padding:12px;font-size:11px;color:#dce4f5;white-space:pre-wrap;overflow-x:auto;max-height:200px;overflow-y:auto;">'+detSnippet+'</pre>';
+
+  modal.appendChild(box);
+  document.body.appendChild(modal);
+  box.querySelector('#dbgClose').addEventListener('click',function(){modal.remove();});
+  modal.addEventListener('click',function(e){if(e.target===modal)modal.remove();});
+}
+
+
+function updateSummary(){
+  document.getElementById('scTotal').textContent=allResults.length;
+  document.getElementById('scPass').textContent=allResults.filter(r=>r.status==='pass').length;
+  document.getElementById('scFail').textContent=allResults.filter(r=>r.status==='fail').length;
+  document.getElementById('scWarn').textContent=allResults.filter(r=>r.status==='warn').length;
+}
+
+function exportCSV(type){
+  const data=type==='flagged'?allResults.filter(r=>r.status==='fail'):allResults;
+  if(!data.length){alert('No results to export.');return;}
+  const rows=[['Customer','Filename','Type','Vehicles','Monthly EFT','Status','Errors','Warnings']];
+  data.forEach(r=>rows.push([r.name,r.filename,r.quoteType,r.vehicleCount,
+    r.monthlyEFT?'$'+r.monthlyEFT.toFixed(2):'',r.status.toUpperCase(),
+    r.errors.join(' | '),r.warnings.join(' | ')]));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download=`TritoX_QC_${type}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+function clearAll(){
+  allResults=[];
+  document.getElementById('resultsBody').innerHTML='';
+  document.getElementById('summaryBar').style.display='none';
+  document.getElementById('toolbar').style.display='none';
+  document.getElementById('resultsWrap').style.display='none';
+  updateSummary();
+}
+</script>
+</body>
+</html>
